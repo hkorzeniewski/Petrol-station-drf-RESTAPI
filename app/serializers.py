@@ -37,19 +37,19 @@ class PetrolStationSerializer(serializers.ModelSerializer):
         # print(raw_fuel)
 
         for fuel_data in raw_fuel:
-            # print(fuel_data)
+            print(fuel_data)
             raw = fuel_data.pop('fuel_price_info')
             price = Price.objects.create(value=raw['value'], user=raw['user'])
-            fuel = Fuel.objects.filter(fuel_type=fuel_data['fuel_type'], fuel_price_info=price)
+            fuel = Fuel.objects.create(fuel_type=fuel_data['fuel_type'], fuel_price_info=price)
+            
+            fuel_get = Fuel.objects.filter(fuel_type=fuel_data['fuel_type'], fuel_price_info=price)
 
         for location_data in raw_location:
-            print(location_data) 
-            print(location_data['voivodeship'])
             location = StationLocation.objects.filter(voivodeship=location_data['voivodeship'], location_name=location_data['location_name'])
         
         petrol_station = PetrolStation.objects.create(station_name=raw_name)
         print(petrol_station)
-        petrol_station.fuel.set(fuel)
+        petrol_station.fuel.set(fuel_get)
         petrol_station.location.set(location)
         return petrol_station
 
