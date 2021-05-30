@@ -24,6 +24,7 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('stations/', views.petrol_station_list),
+    path('stations/', views.PetrolStationList.as_view()),
+    path('stations/<int:pk>', views.PetrolStationDetail.as_view()),
     path('admin/', admin.site.urls)
 ]

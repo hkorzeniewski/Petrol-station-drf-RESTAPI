@@ -29,7 +29,8 @@ class StationLocation(models.Model):
         ('mazowieckie', 'mazowieckie')
     )
     voivodeship = models.CharField(max_length=30, choices=VOIVODESHIP_NAMES)
-    location_name = models.CharField(max_length=20)
+    city_name = models.CharField(max_length=20)
+    street_name = models.CharField(max_length=30, default="zielona 8", blank=True)
     x_coordinate = models.FloatField(default=1, blank=True)
     y_coordinate = models.FloatField(default=1, blank=True)
 
