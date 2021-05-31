@@ -1,4 +1,5 @@
 # from app.views import petrol_station_list
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
@@ -53,7 +54,7 @@ class PetrolStationSerializer(serializers.ModelSerializer):
     location = LocationDetailSerializer(many=True)
     class Meta:
         model = PetrolStation
-        fields = ['station_name', 'fuel', 'location']
+        fields = ['id', 'station_name', 'fuel', 'location']
 
     def create(self, validated_data):
 
@@ -81,17 +82,20 @@ class PetrolStationSerializer(serializers.ModelSerializer):
         instance.station_name = validated_data.get('station_name', instance.station_name)
         fuel_data = validated_data.pop('fuel')
 
+        user = None
         value = 0
         station = PetrolStation.objects.filter(id=instance.id)
 
         for fuel in fuel_data:
             fuel_info = fuel['fuel_price_info']
             value = fuel_info['value']
+            user = fuel_info['user']
 
         for state in station:
             fuel = state.fuel.get()
             price = fuel.fuel_price_info
-            price.value= value
+            price.value=value
+            price.user=user
             price.save()
 
         instance.save()
@@ -99,5 +103,9 @@ class PetrolStationSerializer(serializers.ModelSerializer):
 
 
 
-
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    # prices = serializers.PrimaryKeyRelatedField(many=True, queryset=PetrolStation.objects.all())
    
+    class Meta:
+        model = User
+        fields= ['id', 'username']
