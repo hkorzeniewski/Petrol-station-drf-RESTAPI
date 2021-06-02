@@ -26,8 +26,8 @@ urlpatterns = [
     path('', views.api_root),
     path('stations/', views.PetrolStationList.as_view(), name='station-list'),
     path('stations/<int:pk>', views.PetrolStationDetail.as_view()),
-    # re_path('^stations/(?P<station_name>.+)/$', views.PetrolStationList.as_view()),
     path('users/', views.UserList.as_view(), name='user-list'),
     path('api-auth/', include('rest_framework.urls')),
+    path('api-token-auth/',  views.CustomAuthToken.as_view()),
     path('admin/', admin.site.urls)
 ]

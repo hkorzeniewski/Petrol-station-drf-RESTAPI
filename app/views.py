@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from app.serializers import LocationDetailSerializer, PetrolStationSerializer, PriceDetailSerializer, UserSerializer
 from app.models import PetrolStation
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render
 from rest_framework import serializers, viewsets
@@ -12,6 +13,8 @@ from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from django.http import JsonResponse, Http404
 from rest_framework import generics
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
 @api_view(['GET'])
@@ -21,17 +24,19 @@ def api_root(request, format=None):
         'stations': reverse('station-list', request=request, format=format)
     })
 
-class PriceDetail(generics.RetrieveUpdateDestroyAPIView):
+class PriceDetail(viewsets.ModelViewSet):
     queryset = Price.objects.all()
     serializer_class = PriceDetailSerializer
 
 
-class StationLocationList(generics.RetrieveUpdateDestroyAPIView):
+class StationLocationList(viewsets.ModelViewSet):
     queryset = StationLocation.objects.all()
     serializer_class = LocationDetailSerializer
 
+
 class PetrolStationList(generics.ListAPIView):
     queryset = PetrolStation.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PetrolStationSerializer
     filter_backends = [DjangoFilterBackend]
@@ -81,3 +86,18 @@ class UserList(generics.ListAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })

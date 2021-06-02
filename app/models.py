@@ -30,7 +30,7 @@ class StationLocation(models.Model):
     )
     voivodeship = models.CharField(max_length=30, choices=VOIVODESHIP_NAMES)
     city_name = models.CharField(max_length=20)
-    street_name = models.CharField(max_length=30, default="zielona 8", blank=True)
+    street_name = models.CharField(max_length=30,  blank=True)
     x_coordinate = models.FloatField(default=1, blank=True)
     y_coordinate = models.FloatField(default=1, blank=True)
 
@@ -38,5 +38,5 @@ class StationLocation(models.Model):
 class PetrolStation(models.Model):
     station_name = models.CharField(max_length=30)
     fuel = models.ManyToManyField(Fuel)
-    location = models.ManyToManyField(StationLocation)
+    location = models.ForeignKey(StationLocation, on_delete=models.CASCADE)
 
