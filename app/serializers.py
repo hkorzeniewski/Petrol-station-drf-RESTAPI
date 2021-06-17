@@ -57,7 +57,6 @@ class PetrolStationSerializer(serializers.ModelSerializer):
         fields = ['id', 'station_name', 'fuel', 'location']
 
     def create(self, validated_data):
-        print(validated_data)
 
         raw_fuel = validated_data.pop('fuel')
         location_data = validated_data.pop('location')
@@ -66,7 +65,6 @@ class PetrolStationSerializer(serializers.ModelSerializer):
         petrol_station = PetrolStation.objects.create(station_name=raw_name, location=location)
 
         for fuel_data in raw_fuel:
-            print(fuel_data)
             raw = fuel_data.pop('fuel_price_info')
             price = Price.objects.create(value=raw['value'], user=raw['user'])
             fuel = Fuel.objects.create(fuel_type=fuel_data['fuel_type'], fuel_price_info=price)

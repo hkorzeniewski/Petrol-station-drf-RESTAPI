@@ -36,7 +36,7 @@ class StationLocationList(viewsets.ModelViewSet):
 
 class PetrolStationList(generics.ListAPIView):
     queryset = PetrolStation.objects.all()
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PetrolStationSerializer
     filter_backends = [DjangoFilterBackend]
