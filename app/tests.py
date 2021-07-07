@@ -8,8 +8,8 @@ from rest_framework import status
 from requests.auth import HTTPBasicAuth
 # Create your tests here.
 
-token = Token.objects.get(user__username='admin')
-user = User.objects.get(username='admin')
+# token = Token.objects.get(user__username='admin')
+# user = User.objects.get(username='admin')
 
 class TestPetrolStation(APITestCase):
 
@@ -29,22 +29,23 @@ class TestPetrolStation(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_authenticated_can_add_station(self):
+        # client = APIClient(enforce_csrf_checks=True)
+        # user = User.objects.get(username='admin')
         user = User.objects.create_user(username='testuser', password='1234')
-        StationLocation.objects.create(voivodeship='lubelskie', city_name='Lublin', street_name='Zielona 8')
-        Fuel.objects.create(fuel_type='P98')
-        Price.objects.create(value=5.82, user=1)
-        self.client.force_login(user=user)
+        token = Token.objects.create(user=user)
+        self.client.login(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         data = {
             "id": 1,
             "station_name": "BP",
             "fuel": [
                 {
-
+                    "id": 1,
                     "fuel_type": "P98",
                     "fuel_price_info": {
-
+                        "id": 1,
                         "value": "5.82",
-
+                        "change_date": "2021-06-21T22:57:29.760819Z",
                         "user": 1
                     }
                 }
@@ -54,7 +55,7 @@ class TestPetrolStation(APITestCase):
                 "id": 2,
                 "voivodeship": "lubelskie",
                 "city_name": "Lublin",
-                "street_name": "Zielona 8",
+                "street_name": "Zielona 11",
                 "x_coordinate": 13.0,
                 "y_coordinate": 16.0
             }

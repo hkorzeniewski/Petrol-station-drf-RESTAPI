@@ -36,11 +36,11 @@ class StationLocationList(viewsets.ModelViewSet):
 
 class PetrolStationList(generics.ListAPIView):
     queryset = PetrolStation.objects.all()
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PetrolStationSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['station_name']
+    filterset_fields = ['station_name', 'location__city_name', 'location__voivodeship', "fuel__fuel_type"]
     ordering = ['station_name']
     
     def post(self, request, format=None):

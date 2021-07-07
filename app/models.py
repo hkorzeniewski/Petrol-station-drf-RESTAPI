@@ -19,6 +19,9 @@ class Fuel(models.Model):
 
 
 class StationLocation(models.Model):
+
+    
+
     VOIVODESHIP_NAMES = (
         ('dolnoslaskie', 'dolnoslaskie'),
         ('kujawsko-pomorskie', 'kujawsko-pomorskie'),
@@ -37,6 +40,6 @@ class StationLocation(models.Model):
 
 class PetrolStation(models.Model):
     station_name = models.CharField(max_length=30)
-    fuel = models.ManyToManyField(Fuel)
-    location = models.ForeignKey(StationLocation, on_delete=models.CASCADE)
+    fuel = models.ManyToManyField(Fuel, default=None)
+    location = models.ForeignKey(StationLocation, on_delete=models.CASCADE, unique=True)
 

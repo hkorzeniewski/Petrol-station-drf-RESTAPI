@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-9&inlu^f@(8y(#v0wn!t*h@d=a&9^-gbcsmtoxrr3uxmy3v5j^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework.authtoken',
+    'corsheaders',
     'app'
 ]
 
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'petrolapp.urls'
@@ -83,7 +85,7 @@ DATABASES = {
         'NAME': 'my_db',
         'USER' : 'postgres',
         'PASSWORD' : '1234',
-        'HOST' : 'db',
+        'HOST' : 'localhost',
         'PORT' : '5432'
     }
 }
@@ -145,3 +147,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
 }
+
+CORS_ALLOW_ALL_ORIGINS=True
+

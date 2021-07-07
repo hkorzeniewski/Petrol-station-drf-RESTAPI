@@ -23,24 +23,16 @@ class PriceDetailSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class FuelSerializer(serializers.ModelSerializer):
-    fuel_price_info = PriceDetailSerializer()
-    class Meta:
-        model = Fuel
-        fields = ['fuel_type', 'fuel_price_info']
-
-
 class FuelDetailSerializer(serializers.ModelSerializer):
     fuel_price_info = PriceDetailSerializer()
     class Meta: 
         model = Fuel
         fields = ['id','fuel_type', 'fuel_price_info']
+    
+    # def to_representation(self, instance):
+    #     data = super(FuelDetailSerializer, self).to_representation(instance)
+    #     return dict(fuel=data)
 
-
-class LocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StationLocation
-        fields = ['voivodeship', 'city_name']
 
 
 class LocationDetailSerializer(serializers.ModelSerializer):
@@ -51,17 +43,24 @@ class LocationDetailSerializer(serializers.ModelSerializer):
 
 class PetrolStationSerializer(serializers.ModelSerializer):
     fuel = FuelDetailSerializer(many=True)
+
     location = LocationDetailSerializer()
     class Meta:
         model = PetrolStation
         fields = ['id', 'station_name', 'fuel', 'location']
+
 
     def create(self, validated_data):
 
         raw_fuel = validated_data.pop('fuel')
         location_data = validated_data.pop('location')
         raw_name = validated_data.pop('station_name')
-        location = StationLocation.objects.get(voivodeship=location_data['voivodeship'], city_name=location_data['city_name'], street_name=location_data['street_name'].capitalize())  
+        if location_data != '':
+            location = StationLocation.objects.filter(voivodeship=location_data['voivodeship'], city_name=location_data['city_name'], street_name=location_data['street_name'].capitalize())
+            if not location:
+                location = StationLocation.objects.create(voivodeship=location_data['voivodeship'], city_name=location_data['city_name'], street_name=location_data['street_name'].capitalize())  
+            else:
+                location =  StationLocation.objects.get(voivodeship=location_data['voivodeship'], city_name=location_data['city_name'], street_name=location_data['street_name'].capitalize())  
         petrol_station = PetrolStation.objects.create(station_name=raw_name, location=location)
 
         for fuel_data in raw_fuel:
