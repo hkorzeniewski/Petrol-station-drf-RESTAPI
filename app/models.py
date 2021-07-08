@@ -17,10 +17,11 @@ class Fuel(models.Model):
     fuel_type = models.CharField(max_length=10, choices=FUEL_TYPES)
     fuel_price_info = models.ForeignKey(Price, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return '{}'.format(self.fuel_type)
+
 
 class StationLocation(models.Model):
-
-    
 
     VOIVODESHIP_NAMES = (
         ('dolnoslaskie', 'dolnoslaskie'),
@@ -37,6 +38,8 @@ class StationLocation(models.Model):
     x_coordinate = models.FloatField(default=1, blank=True)
     y_coordinate = models.FloatField(default=1, blank=True)
 
+    def __str__(self):
+        return '{}'.format(self.city_name)
 
 class PetrolStation(models.Model):
     station_name = models.CharField(max_length=30)

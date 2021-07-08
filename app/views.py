@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import fields
 from app.serializers import LocationDetailSerializer, PetrolStationSerializer, PriceDetailSerializer, UserSerializer
 from app.models import PetrolStation
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -6,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render
 from rest_framework import serializers, viewsets
 from rest_framework import permissions, status
-from .models import PetrolStation, Price, StationLocation
+from .models import Fuel, PetrolStation, Price, StationLocation
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,6 +16,10 @@ from django.http import JsonResponse, Http404
 from rest_framework import generics
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
+from django.core.serializers import serialize
+
+from app import models
 
 # Create your views here.
 @api_view(['GET'])
@@ -74,8 +79,36 @@ class PetrolStationDetail(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     
+    
+
+
+
+class PetrolStationAddFuelViewSet(viewsets.ModelViewSet):
+    queryset = models.PetrolStation.objects.all()
+    serializer_class = PetrolStationSerializer
+
+    @action(methods=['post', 'get'], detail=True)
+    def add_fuel(self, request, *args, **kwargs):
+        obj = self.get_object()
+        station = PetrolStation.objects.get(id=obj.id)
+        request_fuels=request.data
+
+        if 'fuel' in request_fuels:
+            print('jadom')
+            for fuel in request_fuels['fuel']:
+                price = Price.objects.create(
+                    value=fuel['fuel_price_info']['value'], user=request.user)
+                fuel1 = Fuel.objects.create(
+                    fuel_type=fuel['fuel_type'], fuel_price_info=price)
+                station.fuel.add(fuel1)
+                station.save()
+            return Response("Successfully added fuels")
+        return Response("Bonk")
+
+
+        
+
     
 
 class UserList(generics.ListAPIView):

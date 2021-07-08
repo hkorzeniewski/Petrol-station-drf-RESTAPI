@@ -29,9 +29,12 @@ class FuelDetailSerializer(serializers.ModelSerializer):
         model = Fuel
         fields = ['id','fuel_type', 'fuel_price_info']
     
-    # def to_representation(self, instance):
-    #     data = super(FuelDetailSerializer, self).to_representation(instance)
-    #     return dict(fuel=data)
+    # def to_representation(self, data):
+    #     result = {}
+    #     for element in super(FuelDetailSerializer, self).to_representation():
+    #         for key, value in element.items():
+    #             result[key] = value
+    #     return result
 
 
 
@@ -43,7 +46,6 @@ class LocationDetailSerializer(serializers.ModelSerializer):
 
 class PetrolStationSerializer(serializers.ModelSerializer):
     fuel = FuelDetailSerializer(many=True)
-
     location = LocationDetailSerializer()
     class Meta:
         model = PetrolStation
@@ -51,7 +53,6 @@ class PetrolStationSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-
         raw_fuel = validated_data.pop('fuel')
         location_data = validated_data.pop('location')
         raw_name = validated_data.pop('station_name')
@@ -74,33 +75,35 @@ class PetrolStationSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.station_name = validated_data.get('station_name', instance.station_name)
+        print(validated_data)
         new_fuel_data = validated_data.pop('fuel')
 
         users = list()
         values = list()
         types = list()
         station = PetrolStation.objects.filter(id=instance.id)
-        print(station)
-        
+        add_fuel = PetrolStation.objects.get(id=instance.id)
+
         for new_fuel in new_fuel_data:
             fuel_info = new_fuel['fuel_price_info']
             types.append(new_fuel['fuel_type'])
             values.append(fuel_info['value']) 
             users.append(fuel_info['user'])
 
-        fuels = station[0].fuel.all() 
+        print(types)
 
+        fuels = station[0].fuel.all() 
         i = 0
         for fuel in fuels:
-            # print(fuel.fuel_price_info.id)
             for x in types:
-                print(x)
+                
                 if fuel.fuel_type == x:
-                    # price = Price.objects.get(id=fuel.fuel_price_info.id)
-                    fuel.fuel_price_info.value = values[i]
-                    fuel.fuel_price_info.user = users[i]
+                    types.remove(x)
+                    price = Price.objects.get(id=fuel.fuel_price_info.id)
+                    price.value = values[i]
+                    price.user = users[i]
                     i+=1
-                    fuel.fuel_price_info.save()
+                    price.save()
 
         instance.save()
         return instance
