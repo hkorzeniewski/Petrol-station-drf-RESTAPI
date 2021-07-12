@@ -29,14 +29,6 @@ class FuelDetailSerializer(serializers.ModelSerializer):
         model = Fuel
         fields = ['id','fuel_type', 'fuel_price_info']
     
-    # def to_representation(self, data):
-    #     result = {}
-    #     for element in super(FuelDetailSerializer, self).to_representation():
-    #         for key, value in element.items():
-    #             result[key] = value
-    #     return result
-
-
 
 class LocationDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -82,7 +74,6 @@ class PetrolStationSerializer(serializers.ModelSerializer):
         values = list()
         types = list()
         station = PetrolStation.objects.filter(id=instance.id)
-        add_fuel = PetrolStation.objects.get(id=instance.id)
 
         for new_fuel in new_fuel_data:
             fuel_info = new_fuel['fuel_price_info']
@@ -90,13 +81,10 @@ class PetrolStationSerializer(serializers.ModelSerializer):
             values.append(fuel_info['value']) 
             users.append(fuel_info['user'])
 
-        print(types)
-
         fuels = station[0].fuel.all() 
         i = 0
         for fuel in fuels:
             for x in types:
-                
                 if fuel.fuel_type == x:
                     types.remove(x)
                     price = Price.objects.get(id=fuel.fuel_price_info.id)

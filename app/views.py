@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import fields
-from app.serializers import LocationDetailSerializer, PetrolStationSerializer, PriceDetailSerializer, UserSerializer
+from app.serializers import LocationDetailSerializer, PetrolStationSerializer, PriceDetailSerializer, UserSerializer, FuelDetailSerializer
 from app.models import PetrolStation
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
@@ -57,8 +57,6 @@ class PetrolStationList(generics.ListAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 class PetrolStationDetail(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     def get_object(self, pk):
@@ -81,9 +79,6 @@ class PetrolStationDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-
-
-
 class PetrolStationAddFuelViewSet(viewsets.ModelViewSet):
     queryset = models.PetrolStation.objects.all()
     serializer_class = PetrolStationSerializer
@@ -106,10 +101,6 @@ class PetrolStationAddFuelViewSet(viewsets.ModelViewSet):
             return Response("Successfully added fuels")
         return Response("Bonk")
 
-
-        
-
-    
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()

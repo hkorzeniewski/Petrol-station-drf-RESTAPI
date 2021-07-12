@@ -22,7 +22,7 @@ from app import views
 
 router = routers.DefaultRouter()
 router.register(r'locations', views.StationLocationList)
-router.register(r'stations', views.PetrolStationAddFuelViewSet)
+router.register(r'station', views.PetrolStationAddFuelViewSet)
 
 urlpatterns = [
     path('', views.api_root),

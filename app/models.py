@@ -43,6 +43,6 @@ class StationLocation(models.Model):
 
 class PetrolStation(models.Model):
     station_name = models.CharField(max_length=30)
-    fuel = models.ManyToManyField(Fuel, default=None)
+    fuel = models.ManyToManyField(Fuel, default=None, blank=True)
     location = models.ForeignKey(StationLocation, on_delete=models.CASCADE, unique=True)
 
