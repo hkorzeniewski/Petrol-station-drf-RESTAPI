@@ -27,6 +27,7 @@ Django = "==3.2.3"
 PyJWT = "==2.1.0"
 gunicorn = "*"
 django-heroku = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
