@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import environ
 from pathlib import Path
 import os
+import django_heroku
+
 import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -159,3 +161,5 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS=True
 
+# Activate Django-Heroku.
+django_heroku.settings(locals())
