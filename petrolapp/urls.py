@@ -19,18 +19,25 @@ from django.db import router
 from django.urls import path, include, re_path
 from rest_framework import routers, viewsets
 from app import views
+from rest_framework_simplejwt import views as jwt_views
 
 router = routers.DefaultRouter()
 router.register(r'locations', views.StationLocationList)
-router.register(r'station', views.PetrolStationAddFuelViewSet)
+router.register(r'stations', views.PetrolStationAddFuelViewSet)
 
 urlpatterns = [
-    path('', views.api_root),
+    # path('', views.api_root),
     path('', include(router.urls)),
     path('stations/', views.PetrolStationList.as_view(), name='station-list'),
     path('stations/<int:pk>/', views.PetrolStationDetail.as_view()),
     path('users/', views.UserList.as_view(), name='user-list'),
     path('api-auth/', include('rest_framework.urls')),
     path('api-token-auth/',  views.CustomAuthToken.as_view()),
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('api/token/',
+         jwt_views.TokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
+    path('api/token/refresh/',
+         jwt_views.TokenRefreshView.as_view(),
+         name='token_refresh'),
 ]
